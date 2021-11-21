@@ -9,3 +9,11 @@ During the livestream I only added things when I really needed them.
 The dependenices added were express, Axios to simplify http requests in node, and nodemon to reload my app on file save. 
 
 Things I didn't need were a frontend framework, or a database. The rough idea was working in under 2 hours with < 120 lines of code. 
+
+
+# Setup instructions
+
+`npm install`
+`npm start`
+
+load http://localhost:3000/index.html

@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <style>
+
+        </style>
+       
+    </head>
+    <body>
+        <h1>My Fav Starwars Characters</h1>
+        <div><input id="searchbox" type="text" /> <button id="search-btn">Search</button></div>
+        <div id="luke">
+            <div>Name: <span id="name"></span></div>
+            <div>Born: <span id="born"></span></div>
+            <button id="add-favourite">Add Fav</button>
+        </div>
+        <h1>Favourites</h1>
+        <div id="fav-list">
+
+        </div>
+
+        <script>
+            let currentSearch = null
+            function search() {
+
+                const term = document.getElementById('searchbox').value
+                console.log(term)
+                fetch(`/character-search?searchterm=${term}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const character = data.results[0]
+                        currentSearch = character
+                        renderCharacter(character)
+                    })
+            }
+
+            function renderCharacter(character) {
+                console.log(character)
+                    document.querySelector('#name').innerHTML = character.name
+                    document.querySelector('#born').innerHTML = character.birth_year
+            }
+
+            const a =  document.querySelector('#search-btn')
+            a.addEventListener('click', search)
+
+            document.querySelector('#add-favourite')
+                .addEventListener('click', async () => {
+                    if(currentSearch != null) {
+                        fetch('/add-favourite', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(currentSearch)
+                        }).then(() => getFavourites())
+                }
+                
+                })
+            
+            function renderFavourites(favourites) {
+                const favouritesDiv = document.createElement('div')
+                favourites.forEach(fav => {
+                    const favourite = document.createElement('div')
+                    favourite.innerHTML = `
+                        <div>Name: ${fav.name}</div>
+                        <div>Born: ${fav.birth_year}</div>
+                    `
+                    favouritesDiv.appendChild(favourite)
+                })
+
+                const favlist = document.querySelector('#fav-list')
+                favlist.innerHTML = ''
+                favlist.appendChild(favouritesDiv)
+                
+
+            }
+
+            function getFavourites() {
+                fetch('/get-favourites')
+                    .then(response => response.json())
+                    .then(data => {
+                        renderFavourites(data)
+                    })
+            }
+
+            getFavourites()
+        </script>
+    </body>
+</html>
